@@ -1,16 +1,29 @@
-import React from 'react'
-import {View,Text,Button} from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, Button,ImageBackground, ActivityIndicator } from 'react-native';
 
-function SplashScreen({navigation}) {
+import { globalStyles } from '../styles/Styles';
+import SplashScreenImage from '../../assets/splashImg.jpg'
+
+function SplashScreen({ navigation }) {
+  useEffect(()=>{
+    setTimeout(()=>{
+      navigation.replace('Login');
+    },3000)
+  },[]);
   return (
-    <View>
-    <Text>This is the Splash Screen</Text>
-    <Button
-      title="Go to Login screen"
-      onPress={() => navigation.navigate('Login')}
-    />
-  </View>
-  )
+    <View style={globalStyles.container}>
+      <ImageBackground
+      source={SplashScreenImage} 
+      style={globalStyles.backgroundImage}
+      resizeMode="cover">
+        <Text style={[globalStyles.titleText,{color:"#A7C3D0"}]}>Health Me</Text>
+        <ActivityIndicator size="large" color="#A7C3D0" />
+       
+     </ImageBackground>
+    </View>
+  );
 }
 
-export default SplashScreen
+
+
+export default SplashScreen;
