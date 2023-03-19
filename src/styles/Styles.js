@@ -4,7 +4,6 @@ export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    
     justifyContent: 'center',
     padding: 20,
   },
@@ -41,7 +40,7 @@ export const globalStyles = StyleSheet.create({
     width: '100%',
   },
   buttonContainer: {
-    backgroundColor: '#A7C3D0',
+    backgroundColor: '#5339c6',
     padding: 10,
     marginTop: 10,
     borderRadius: 8,
@@ -56,6 +55,46 @@ export const globalStyles = StyleSheet.create({
   buttonWrapper:{
     justifyContent:'center',
     alignItems:'center'
+  },
+   card: {
+    margin: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: '#2A2E43',
+    position: 'relative', // add relative positioning for the badge
+    height: 150,
+    width: '90%',
+    alignSelf: 'center',
+    flexDirection: 'row', // display items in a row
+    alignItems: 'center',
+  },
+  card: {
+    margin: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: '#2A2E43',
+    position: 'relative', // add relative positioning for the badge
+    height: 200,
+    width: 350,
+  },
+  cardImage: {
+    height: '80%',
+    width: '100%',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  badge: {
+    position: 'absolute',
+    top:10,
+    right: 10,
+    padding: 5,
+    backgroundColor: 'green',
+    borderRadius: 20,
   }
 
 });
