@@ -2,8 +2,9 @@ import React from 'react';
 import { Text } from 'react-native';
 import { globalStyles } from '../styles/Styles';
 
-export function HeaderText({ title }) {
+//Predefined Header Text
+export function HeaderText({ title,style }) {
   return (
-    <Text style={globalStyles.headerText}>{title}</Text>
+    <Text style={[globalStyles.headerText,style]}>{title}</Text>
   );
 }

@@ -5,6 +5,7 @@ import { globalStyles } from '../styles/Styles';
 import SplashScreenImage from '../../assets/splashImg.jpg'
 
 function SplashScreen({ navigation }) {
+  // Use effect function used to delay splash screen for 3 seconds before moving to Login page
   useEffect(()=>{
     setTimeout(()=>{
       navigation.replace('Login');
