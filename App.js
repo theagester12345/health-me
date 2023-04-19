@@ -1,9 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {initializeApp} from "firebase/app"
-import {getDatabase} from "firebase/database"
-import { firebaseConfig } from './src/DB/FirebaseConfig';
 import SplashScreen from './src/screens/SplashScreen';
 import Login from './src/screens/Login';
 import MyTabs from './src/screens/ExerciseScreen';
@@ -15,23 +12,23 @@ import BackWorkOutsScreen from './src/screens/BackWorkOutsScreen';
 import CoreWorkOutsScreen from './src/screens/CoreWorkOutsScreen';
 import ArmWorkOutsScreen from './src/screens/ArmWorkOutsScreen';
 import DietarySummary from './src/screens/DietarySummary';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+
 
 const Stack = createNativeStackNavigator();
 
 
 export default function App() {
   return (
-    <NavigationContainer >
+   <RootSiblingParent>
+     <NavigationContainer >
       <Stack.Navigator screenOptions={{
         headerShown : false
       }} initialRouteName={'Splash'}>
-        <Stack.Screen name='Splash' component={SplashScreen} />
-        <Stack.Screen name='Login'component={Login}/>
+        {/* <Stack.Screen name='Splash' component={SplashScreen} />
+        <Stack.Screen name='Login'component={Login}/> */}
         <Stack.Screen name='SignUp' component={SignUp}/>
         <Stack.Screen name='Main' component={MyTabs}/>
         <Stack.Screen name='LegWorkOut' component={LegWorkOutsScreen}/>
@@ -43,5 +40,6 @@ export default function App() {
         <Stack.Screen name="Instructions" component={InstructionScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
+   </RootSiblingParent>
   );
 }

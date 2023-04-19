@@ -3,9 +3,15 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { globalStyles } from "../styles/Styles";
 import Icon from "react-native-vector-icons/Ionicons"; // Import Ionicons icon library
-import Toast from "react-native-toast"; // import that handles the Toast Displayed
+import { signUpUser } from "../DB/Firebase";
 
-function SignUp({ navigation }) {
+
+
+
+function SignUp({navigation}) {
+ 
+
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [retypePassword, setRetypePassword] = useState("");
@@ -31,15 +37,17 @@ function SignUp({ navigation }) {
     //Validate the form - password and retype password must be the same before user can be added to db
     if (password!== retypePassword){
       //Alert user using Toast
-      Toast.show("Password does not match ", {
-        position: Toast.position.CENTER,
-        duration: Toast.duration.SHORT,
+      Toast.show("Password does not match.", {
+        duration: Toast.durations.SHORRT,
+        shadow: true,
         animation: true,
-        hideOnPress: true,
+        backgroundColor:'red'
       });
+
+      return;
     }
     // Generate a unique key
-    const uniqueKey = firebase.database().ref().child("user").push().key;
+    const uniqueKey = Date.now();
 
     // Create a data object with the form data
     const userData = {
@@ -49,44 +57,14 @@ function SignUp({ navigation }) {
       dateOfBirth: dateOfBirth.toLocaleDateString(),
     };
 
-    // Save the data to Firebase Realtime Database with the unique key
-    firebase
-      .database()
-      .ref(`user/${uniqueKey}`)
-      .set(userData)
-      .then(() => {
-        console.log("Data saved successfully");
-        // Handle success logic here
-        // Show success toast
-        Toast.show("User saved successfully", {
-          position: Toast.position.CENTER,
-          duration: Toast.duration.SHORT,
-          animation: true,
-          hideOnPress: true,
-        });
+   
+    //Before signinng up , check user existence
+    // if (checkUserExistence(email,username)){
+    //   return;
+    // }
 
-        //Switch to Login page after 3 seconds
-        setTimeout(() => {
-          const resetAction = NavigationActions.reset({
-            index: 0,
-            actions: [
-              NavigationActions.navigate({ routeName: "Login" }) 
-            ],
-          });
-          // Call the navigation dispatch function to navigate back to login page
-          this.props.navigation.dispatch(resetAction);
-        }, 3000);
-      })
-      .catch((error) => {
-        console.error("Error saving data: ", error);
-        // Handle error logic here
-        Toast.show(`Failed to save user: ${error.message}`, {
-          position: Toast.position.CENTER,
-          duration: Toast.duration.SHORT,
-          animation: true,
-          hideOnPress: true,
-        });
-      });
+    //Sign Up the USer 
+    signUpUser(uniqueKey,userData,navigation);
   };
 
   return (
