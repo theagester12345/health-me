@@ -1,24 +1,32 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity} from "react-native";
 import { globalStyles } from "../styles/Styles";
+import { loginUser } from "../DB/Firebase";
+import Toast from 'react-native-root-toast';
 
 function Login({ navigation }) {
   //Use state function used to obtain username and password from the inputs
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [user, setUser] = React.useState(null);
 
   const handleLogin = () => {
     // Handle login logic here
-    //setting a static password and username
-    if (username === "healthme.admin" && password === "12345") {
-      //move to home screen
-      console.log("Logged in");
-      navigation.navigate("Main");
-    } else {
-      //return invalid password
-      console.log("Invalid password");
-    }
-    console.log("Logging in with", username, password);
+    loginUser(username, password)
+      .then((user) => {
+        console.log("Logged in");
+        setUser(user);
+        navigation.replace('Main',{user});
+      })
+      .catch(() => {
+        console.log("Invalid username or password");
+        Toast.show('Invalid username or password', {
+          duration: Toast.durations.SHORT,
+          shadow: true,
+          animation: true,
+          backgroundColor: 'red',
+        });
+      });
   };
 
   const moveToSignUp = () => {
@@ -35,6 +43,7 @@ function Login({ navigation }) {
         placeholderTextColor='#fff'
         value={username}
         onChangeText={setUsername}
+        autoCapitalize="none"
       />
       <TextInput
         style={globalStyles.input}
@@ -43,6 +52,7 @@ function Login({ navigation }) {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+        autoCapitalize="none"
       />
       <View
         style={[

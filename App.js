@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './src/screens/SplashScreen';
 import Login from './src/screens/Login';
-import MyTabs from './src/screens/ExerciseScreen';
+import MainScreen from './src/screens/MainScreen';
 import InstructionScreen from './src/screens/InstructionScreen';
 import SignUp from './src/screens/Signup';
 import LegWorkOutsScreen from './src/screens/LegWorkOutsScreen';
@@ -30,7 +30,7 @@ export default function App() {
         <Stack.Screen name='Splash' component={SplashScreen} />
         <Stack.Screen name='Login'component={Login}/>
         <Stack.Screen name='SignUp' component={SignUp}/>
-        <Stack.Screen name='Main' component={MyTabs}/>
+        <Stack.Screen name='Main' component={MainScreen}/>
         <Stack.Screen name='LegWorkOut' component={LegWorkOutsScreen}/>
         <Stack.Screen name='ChestWorkOut' component={ChestWorkOutsScreen}/>
         <Stack.Screen name='CoreWorkOut' component={CoreWorkOutsScreen}/>

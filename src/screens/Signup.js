@@ -1,22 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { globalStyles } from "../styles/Styles";
-import Icon from "react-native-vector-icons/Ionicons"; // Import Ionicons icon library
-import { signUpUser } from "../DB/Firebase";
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { globalStyles } from '../styles/Styles';
+import Icon from 'react-native-vector-icons/Ionicons'; // Import Ionicons icon library
+import { checkUserExistence, signUpUser } from '../DB/Firebase';
+import Toast from 'react-native-root-toast';
 
-
-
-
-function SignUp({navigation}) {
- 
-
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [retypePassword, setRetypePassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
+function SignUp({ navigation }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [retypePassword, setRetypePassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
   const showDatePicker = () => {
@@ -33,19 +28,19 @@ function SignUp({navigation}) {
     hideDatePicker();
   };
 
-  const handleSignUp = () => {
-    //Validate the form - password and retype password must be the same before user can be added to db
-    if (password!== retypePassword){
-      //Alert user using Toast
-      Toast.show("Password does not match.", {
+  const handleSignUp = async () => {
+    // Validate the form - password and retype password must be the same before user can be added to db
+    if (password !== retypePassword) {
+      // Alert user using Toast
+      Toast.show('Password does not match.', {
         duration: Toast.durations.SHORRT,
         shadow: true,
         animation: true,
-        backgroundColor:'red'
+        backgroundColor: 'red',
       });
-
       return;
     }
+
     // Generate a unique key
     const uniqueKey = Date.now();
 
@@ -53,18 +48,45 @@ function SignUp({navigation}) {
     const userData = {
       username,
       password,
+      "bmi":0.00,
       email,
-      dateOfBirth: dateOfBirth.toLocaleDateString(),
+      dateOfBirth: dateOfBirth ? dateOfBirth.toLocaleDateString() : null,
     };
 
-   
-    //Before signinng up , check user existence
-    // if (checkUserExistence(email,username)){
-    //   return;
-    // }
+    // Before signinng up , check user existence
+    const userExists = await checkUserExistence(email, username);
+    if (userExists) {
+      Toast.show('Username or Email already exists', {
+        duration: Toast.durations.SHORT,
+        shadow: true,
+        animation: true,
+        backgroundColor: 'red',
+      });
 
-    //Sign Up the USer 
-    signUpUser(uniqueKey,userData,navigation);
+      return;
+    }
+
+    // Sign Up the user
+    const response = await signUpUser(uniqueKey, userData, navigation);
+    if (response === true) {
+      Toast.show('User saved successfully', {
+        duration: Toast.durations.SHORT,
+        shadow: true,
+        animation: true,
+        backgroundColor: 'green',
+      });
+
+      setTimeout(() => {
+        // TODO: Check if the navigation can actually go back
+      }, 2000);
+    } else {
+      Toast.show(`Failed to save user: ${response.message}`, {
+        duration: Toast.durations.SHORT,
+        shadow: true,
+        animation: true,
+        backgroundColor: 'red',
+      });
+    }
   };
 
   return (
@@ -74,14 +96,14 @@ function SignUp({navigation}) {
         style={globalStyles.backIcon}
         onPress={() => navigation.goBack()} // Navigate back to previous screen
       >
-        <Icon name='arrow-back' size={30} color='#fff' />
+        <Icon name="arrow-back" size={30} color="#fff" />
       </TouchableOpacity>
 
       <Text style={globalStyles.titleText}>Sign Up</Text>
       <TextInput
         style={globalStyles.input}
-        placeholder='Username'
-        placeholderTextColor='#fff'
+        placeholder="Username"
+        placeholderTextColor="#fff"
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
@@ -89,8 +111,8 @@ function SignUp({navigation}) {
 
       <TextInput
         style={globalStyles.input}
-        placeholder='Email'
-        placeholderTextColor='#fff'
+        placeholder="Email"
+        placeholderTextColor="#fff"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -98,8 +120,8 @@ function SignUp({navigation}) {
 
       <TextInput
         style={globalStyles.input}
-        placeholder='Password'
-        placeholderTextColor='#fff'
+        placeholder="Password"
+        placeholderTextColor="#fff"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -108,8 +130,8 @@ function SignUp({navigation}) {
 
       <TextInput
         style={globalStyles.input}
-        placeholder='Re-Type Password'
-        placeholderTextColor='#fff'
+        placeholder="Re-Type Password"
+        placeholderTextColor="#fff"
         secureTextEntry
         value={retypePassword}
         onChangeText={setRetypePassword}
@@ -117,28 +139,26 @@ function SignUp({navigation}) {
       />
 
       <TouchableOpacity style={globalStyles.input} onPress={showDatePicker}>
-        <Text style={{ color: "#fff" }}>
-          {dateOfBirth
-            ? `${dateOfBirth.toLocaleDateString()}`
-            : "Date of Birth"}
+        <Text style={{ color: '#fff' }}>
+          {dateOfBirth ? `${dateOfBirth.toLocaleDateString()}` : 'Date of Birth'}
         </Text>
       </TouchableOpacity>
 
       {isDatePickerVisible && (
         <RNDateTimePicker
           value={new Date()}
-          mode='date'
-          androidMode='spinner'
+          mode="date"
+          androidMode="spinner"
           showIcon={false}
           customStyles={{
             dateInput: {
               borderWidth: 0,
             },
             dateText: {
-              color: "#fff",
+              color: '#fff',
             },
             placeholderText: {
-              color: "#fff",
+              color: '#fff',
             },
           }}
           onChange={handleDatePicked}
@@ -146,10 +166,7 @@ function SignUp({navigation}) {
       )}
 
       <View style={globalStyles.buttonWrapper}>
-        <TouchableOpacity
-          style={globalStyles.buttonContainer}
-          onPress={handleSignUp}
-        >
+        <TouchableOpacity style={globalStyles.buttonContainer} onPress={handleSignUp}>
           <Text style={globalStyles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
       </View>

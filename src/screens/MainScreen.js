@@ -13,54 +13,100 @@ import { Ionicons } from "@expo/vector-icons";
 import { globalStyles } from "../styles/Styles";
 import { HeaderText } from "../components/HeaderText";
 import CardCategories from "../components/CardCategories";
+import { updateUserBMI } from "../DB/Firebase";
 
 // Exercise screen
-function ExerciseScreen({ navigation }) {
+function ExerciseScreen({ route }) {
+  const { user } = route.params;
   return <CardCategories navigation={navigation} />;
 }
 
+
 // BMI Calculator screen
-function BMIScreen() {
-  const [height, setHeight] = useState('');
-  const [weight, setWeight] = useState('');
+function BMIScreen({ navigation,route }) {
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [saveBMI, setSaveBMI] = useState(false);
+
+  console.log (route)
+
+
+  const handleSaveBMI = async () => {
+    try {
+      setSaveBMI(true);
+      const response = await updateUserBMI(
+        route.params.user.id,
+        calculateBMI(height, weight)
+      );
+      if (response) {
+        navigation.navigate("DietarySummary");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={globalStyles.container}>
       <Text style={globalStyles.titleText}>BMI Calculator</Text>
-      <Text style={globalStyles.labelText}>Height (cm):</Text>
+
       <TextInput
         style={globalStyles.input}
-        onChangeText={text => setHeight(text)}
+        onChangeText={(text) => setHeight(text)}
         value={height}
-        placeholder="Enter Your Height"
+        placeholder="Enter Your Current Height (cm)"
         placeholderTextColor="#fff"
         keyboardType="numeric"
       />
-      <Text style={globalStyles.labelText}>Weight (kg):</Text>
+
       <TextInput
         style={globalStyles.input}
-        onChangeText={text => setWeight(text)}
+        onChangeText={(text) => setWeight(text)}
         value={weight}
-        placeholder="Enter Your Height"
+        placeholder="Enter Your Current Weight (kg)"
         placeholderTextColor="#fff"
         keyboardType="numeric"
       />
-      {/* Add button or any other components for BMI calculation */}
+
       <TouchableOpacity
-          
-          style={{
-            backgroundColor: "blue",
-            padding: 20,
-            marginTop: 20,
-            alignSelf: "flex-end",
-          }}
-        >
-          <Text style={{ color: "white", fontWeight: "bold" }}>
-            Next
-          </Text>
-        </TouchableOpacity>
+        style={{
+          backgroundColor: "blue",
+          padding: 20,
+          marginTop: 20,
+          alignSelf: "flex-end",
+        }}
+        onPress={() => {
+          Alert.alert(
+            "Save BMI",
+            "Do you want to save your BMI to your profile?",
+            [
+              {
+                text: "No",
+                onPress: () => {
+                  setSaveBMI(false);
+                  navigation.navigate("DietarySummary");
+                },
+                style: "cancel",
+              },
+              {
+                text: "Yes",
+                onPress: handleSaveBMI,
+              },
+            ]
+          );
+        }}
+      >
+        <Text style={{ color: "white", fontWeight: "bold" }}>Next</Text>
+      </TouchableOpacity>
     </View>
   );
+}
+
+//function to calculate the BMI
+function calculateBMI(heightCm, weightKg) {
+  const heightM = heightCm / 100;
+  const bmi = weightKg / (heightM * heightM);
+  return bmi.toFixed(2);
 }
 
 // Profile screen
@@ -247,8 +293,8 @@ export default function MainScreen() {
             iconName = "calculator-outline";
           } else if (route.name === "Profile") {
             iconName = "person-outline";
-          }else if (route.name==="LogOut"){
-            iconName="log-out-outline"
+          } else if (route.name === "LogOut") {
+            iconName = "log-out-outline";
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
