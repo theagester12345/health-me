@@ -48,7 +48,7 @@ function SignUp({ navigation }) {
     const userData = {
       username,
       password,
-      "bmi":0.00,
+      bmi: 0.0,
       email,
       dateOfBirth: dateOfBirth ? dateOfBirth.toLocaleDateString() : null,
     };
@@ -78,6 +78,9 @@ function SignUp({ navigation }) {
 
       setTimeout(() => {
         // TODO: Check if the navigation can actually go back
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
       }, 2000);
     } else {
       Toast.show(`Failed to save user: ${response.message}`, {

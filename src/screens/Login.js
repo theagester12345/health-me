@@ -1,25 +1,28 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity} from "react-native";
-import { globalStyles } from "../styles/Styles";
-import { loginUser } from "../DB/Firebase";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { globalStyles } from '../styles/Styles';
+import { loginUser } from '../DB/Firebase';
 import Toast from 'react-native-root-toast';
 
 function Login({ navigation }) {
   //Use state function used to obtain username and password from the inputs
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [user, setUser] = React.useState(null);
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const handleLogin = () => {
     // Handle login logic here
     loginUser(username, password)
       .then((user) => {
-        console.log("Logged in");
-        setUser(user);
-        navigation.replace('Main',{user});
+        console.log('Logged in');
+        console.log(user);
+
+        AsyncStorage.setItem('LOGIN_DATA', JSON.stringify(user)).then(() => {
+          navigation.replace('Main');
+        });
       })
       .catch(() => {
-        console.log("Invalid username or password");
+        console.log('Invalid username or password');
         Toast.show('Invalid username or password', {
           duration: Toast.durations.SHORT,
           shadow: true,
@@ -31,7 +34,7 @@ function Login({ navigation }) {
 
   const moveToSignUp = () => {
     //redirect tot sign up page
-    navigation.navigate("SignUp");
+    navigation.navigate('SignUp');
   };
 
   return (
@@ -39,16 +42,16 @@ function Login({ navigation }) {
       <Text style={globalStyles.titleText}>Health Me</Text>
       <TextInput
         style={globalStyles.input}
-        placeholder='Username'
-        placeholderTextColor='#fff'
+        placeholder="Username"
+        placeholderTextColor="#fff"
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
       />
       <TextInput
         style={globalStyles.input}
-        placeholder='Password'
-        placeholderTextColor='#fff'
+        placeholder="Password"
+        placeholderTextColor="#fff"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -59,22 +62,15 @@ function Login({ navigation }) {
           globalStyles.buttonWrapper,
           {
             marginTop: 20,
-            flexDirection: "row",
-            justifyContent: "space-between",
+            flexDirection: 'row',
+            justifyContent: 'space-between',
           },
-        ]}
-      >
-        <TouchableOpacity
-          style={globalStyles.buttonContainer}
-          onPress={handleLogin}
-        >
+        ]}>
+        <TouchableOpacity style={globalStyles.buttonContainer} onPress={handleLogin}>
           <Text style={globalStyles.buttonText}>Login</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={globalStyles.buttonContainer}
-          onPress={moveToSignUp}
-        >
+        <TouchableOpacity style={globalStyles.buttonContainer} onPress={moveToSignUp}>
           <Text style={globalStyles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
