@@ -98,20 +98,33 @@ function ProfileScreen({ navigation, route }) {
   const [newPassword, setNewPassword] = useState('');
 
   //Get user ID from async storage
+ 
   useEffect(() => {
     async function getUserIdFromStorage() {
       const data = await AsyncStorage.getItem('LOGIN_DATA');
-      const userData = JSON.parse(data); 
+      const userData = JSON.parse(data);
       if (userData !== null) {
-        getUserData(userData.id).then((data) => {
-          console.log('user data in use effect');
-          console.log(data);
-          setUser(data);
-        });
+        getUserData(userData.id)
+          .then((data) => {
+            console.log('user data in use effect');
+            console.log(data);
+            setUser(data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
     }
     getUserIdFromStorage();
   }, []);
+
+  if (!user) {
+    return (
+      <View style={{ backgroundColor: '#000', flex: 1 }}>
+        <Text style={{ color: '#fff' }}>Loading...</Text>
+      </View>
+    );
+  }
 
   const handleResetPassword = () => {
     setResetPasswordDialogVisible(true);
@@ -121,16 +134,16 @@ function ProfileScreen({ navigation, route }) {
     // Save new password logic here
     console.log('New password saved: ', newPassword);
 
-    const response = await updateUserPassword (user.id,newPassword);
+    const response = await updateUserPassword(user.id, newPassword);
 
-    if (response){
+    if (response) {
       Toast.show('Password Change Succesful', {
         duration: Toast.durations.SHORT,
         shadow: true,
         animation: true,
         backgroundColor: 'green',
       });
-    }else {
+    } else {
       Toast.show(`${response}`, {
         duration: Toast.durations.SHORT,
         shadow: true,
@@ -140,6 +153,7 @@ function ProfileScreen({ navigation, route }) {
     }
     setResetPasswordDialogVisible(false);
   };
+
 
   // return <View/>
 
