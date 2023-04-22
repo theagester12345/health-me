@@ -126,10 +126,10 @@ export const globalStyles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     padding: 20,
     marginTop: 20,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   //  card: {
   //   margin: 20,

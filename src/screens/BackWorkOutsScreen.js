@@ -1,11 +1,13 @@
+// Import necessary modules and components
 import React from "react";
 import { Text, View, TouchableOpacity, Image, FlatList } from "react-native";
 import { globalStyles } from "../styles/Styles";
 import { HeaderText } from "../components/HeaderText";
 import Icon from "react-native-vector-icons/Ionicons";
 
+// Functional component that displays the back workout screen
 function BackWorkOutsScreen({ navigation }) {
-  //List of Leg Work Out Cards in The App
+  // List of back workout cards in the app
   const cards = [
     {
       id: 1,
@@ -39,14 +41,14 @@ function BackWorkOutsScreen({ navigation }) {
     },
   ];
 
-  //Function Handle Card press
+  // Function to handle card press event
   const handleCardPress = (item) => {
     // Handle card press logic here
     console.log("Pressed card with id:", item.id);
     navigation.navigate("Instructions", { workout: item, navigation });
   };
 
-  //RenderItem contains the cards and is passed to the Flat List (Scroll view)
+  // RenderItem function contains the cards and is passed to the FlatList component for displaying the cards in a scrollable view
   const renderItem = ({ item }) => (
     <TouchableOpacity
       key={item.id}
@@ -62,16 +64,20 @@ function BackWorkOutsScreen({ navigation }) {
       <Text style={globalStyles.cardTitle}>{item.title}</Text>
     </TouchableOpacity>
   );
+
+  // Return the view containing the list of back workout cards
   return (
     <View style={{ backgroundColor: "#000", flex: 1 }}>
-      {/* Arrow back icon */}
+      {/*Arrow back icon */}
       <TouchableOpacity
         style={[globalStyles.backIcon, { marginBottom: 20 }]}
         onPress={() => navigation.goBack()} // Navigate back to previous screen
       >
         <Icon name='arrow-back' size={30} color='#fff' />
       </TouchableOpacity>
+      {/* Header text */}
       <HeaderText style={{ marginTop: 100 }} title='Back WorkOuts' />
+      {/* FlatList component containing the list of back workout cards */}
       <FlatList
         data={cards}
         renderItem={renderItem}
@@ -82,4 +88,5 @@ function BackWorkOutsScreen({ navigation }) {
   );
 }
 
+// Export the BackWorkOutsScreen component as default
 export default BackWorkOutsScreen;

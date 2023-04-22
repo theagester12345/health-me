@@ -1,3 +1,4 @@
+// Import necessary modules
 import React from "react";
 import { Text, View, TouchableOpacity, Image, FlatList } from "react-native";
 import { globalStyles } from "../styles/Styles";
@@ -5,7 +6,7 @@ import { HeaderText } from "../components/HeaderText";
 import Icon from "react-native-vector-icons/Ionicons";
 
 function ChestWorkOutsScreen({ navigation }) {
-  //List of Leg Work Out Cards in The App
+  //List of Chest Work Out Cards in The App
   const cards = [
     {
       id: 1,
@@ -39,14 +40,14 @@ function ChestWorkOutsScreen({ navigation }) {
     },
   ];
 
-  //Function Handle Card press
+  // Function to handle card press
   const handleCardPress = (item) => {
     // Handle card press logic here
     console.log("Pressed card with id:", item.id);
     navigation.navigate("Instructions", { workout: item, navigation });
   };
 
-  //RenderItem contains the cards and is passed to the Flat List (Scroll view)
+  // RenderItem contains the cards and is passed to the Flat List (Scroll view)
   const renderItem = ({ item }) => (
     <TouchableOpacity
       key={item.id}
@@ -62,6 +63,8 @@ function ChestWorkOutsScreen({ navigation }) {
       <Text style={globalStyles.cardTitle}>{item.title}</Text>
     </TouchableOpacity>
   );
+
+  // Return the component with the list of chest workout cards
   return (
     <View style={{ backgroundColor: "#000", flex: 1 }}>
       {/* Arrow back icon */}

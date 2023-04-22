@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp } from "firebase/app";
 import {
   equalTo,
   getDatabase,
@@ -9,40 +9,46 @@ import {
   ref,
   set,
   update,
-} from 'firebase/database';
-import { firebaseConfig } from './FirebaseConfig';
+} from "firebase/database";
+import { firebaseConfig } from "./FirebaseConfig";
 
-// Initialize Firebase
+// Initialize Firebase App using the Firebase configuration object
 const app = initializeApp(firebaseConfig);
 
-//Get Reference
+// Get a reference to the Firebase Realtime Database instance
 const db = getDatabase(app);
 
+// Function to save user data to Firebase Realtime Database with unique key
 export const signUpUser = (userId, userData) => {
-  // Save the data to Firebase Realtime Database with the unique key
   return new Promise((resolve, reject) => {
-    const userRef = ref(db, 'users/' + userId);
+    const userRef = ref(db, "users/" + userId);
     set(userRef, userData)
       .then(() => resolve(true))
       .catch((error) => reject(error));
   });
 };
 
+// Function to check if a user with a given email or username exists
 export const checkUserExistence = (email, username) => {
   return new Promise((resolve) => {
-    const usersRef = ref(db, 'users');
-    const queryRefEmail = query(usersRef, orderByChild('email'), equalTo(email));
+    const usersRef = ref(db, "users");
+    const queryRefEmail = query(
+      usersRef,
+      orderByChild("email"),
+      equalTo(email)
+    );
 
     onValue(queryRefEmail, (snapshot) => {
       if (!snapshot.exists()) {
         resolve(false);
-      }else{
+      } else {
         resolve(true);
       }
     });
   });
 };
 
+// Function to update user's BMI in Firebase Realtime Database
 export const updateUserBMI = (userId, bmi) => {
   return new Promise((resolve, reject) => {
     const userRef = ref(db, `users/${userId}`);
@@ -52,23 +58,29 @@ export const updateUserBMI = (userId, bmi) => {
   });
 };
 
+// Function to update user's password in Firebase Realtime Database
 export const updateUserPassword = (userId, password) => {
-  return new Promise((resolve, reject)=> {
+  return new Promise((resolve, reject) => {
     const userRef = ref(db, `users/${userId}`);
     update(userRef, { password })
       .then(() => resolve(true))
       .catch((error) => reject(error));
-  })
-}
+  });
+};
 
+// Function to log in a user by verifying username and password in Firebase Realtime Database
 export const loginUser = (username, password) => {
   return new Promise((resolve, reject) => {
-    const usersRef = ref(db, 'users');
-    const queryRefUsername = query(usersRef, orderByChild('username'), equalTo(username));
+    const usersRef = ref(db, "users");
+    const queryRefUsername = query(
+      usersRef,
+      orderByChild("username"),
+      equalTo(username)
+    );
 
     onValue(queryRefUsername, (snapshot) => {
       if (!snapshot.exists()) {
-        reject('Username does not exist.');
+        reject("Username does not exist.");
         return;
       }
 
@@ -77,7 +89,7 @@ export const loginUser = (username, password) => {
       const user = { ...data[id], id };
 
       if (user.password !== password) {
-        reject('Password is incorrect.');
+        reject("Password is incorrect.");
         return;
       }
 
@@ -86,14 +98,15 @@ export const loginUser = (username, password) => {
   });
 };
 
+// Function to fetch dietary suggestion data from Firebase Realtime Database
 export const fetchDietarySuggestion = (key) => {
   return new Promise((resolve, reject) => {
-    const programsRef = ref(db, 'program');
+    const programsRef = ref(db, "program");
     const suggestionRef = query(programsRef, orderByKey(), equalTo(key));
 
     onValue(suggestionRef, (snapshot) => {
       if (!snapshot.exists()) {
-        reject('Program does not exist.');
+        reject("Program does not exist.");
         return;
       }
 
@@ -103,12 +116,13 @@ export const fetchDietarySuggestion = (key) => {
   });
 };
 
+// Function to get user data from Firebase Realtime Database
 export const getUserData = (userId) => {
   return new Promise((resolve, reject) => {
     const userRef = ref(db, `users/${userId}`);
     onValue(userRef, (snapshot) => {
       if (!snapshot.exists()) {
-        reject('User does not exist.');
+        reject("User does not exist.");
         return;
       }
       const data = snapshot.toJSON();
@@ -116,4 +130,3 @@ export const getUserData = (userId) => {
     });
   });
 };
-
