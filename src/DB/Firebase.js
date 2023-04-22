@@ -36,14 +36,9 @@ export const checkUserExistence = (email, username) => {
     onValue(queryRefEmail, (snapshot) => {
       if (!snapshot.exists()) {
         resolve(false);
-        return;
+      }else{
+        resolve(true);
       }
-
-      const data = snapshot.toJSON();
-      const userId = Object.keys(data)[0];
-      const hasUsername = data[userId].username === username;
-
-      resolve(hasUsername);
     });
   });
 };
@@ -56,6 +51,15 @@ export const updateUserBMI = (userId, bmi) => {
       .catch((error) => reject(error));
   });
 };
+
+export const updateUserPassword = (userId, password) => {
+  return new Promise((resolve, reject)=> {
+    const userRef = ref(db, `users/${userId}`);
+    update(userRef, { password })
+      .then(() => resolve(true))
+      .catch((error) => reject(error));
+  })
+}
 
 export const loginUser = (username, password) => {
   return new Promise((resolve, reject) => {
@@ -98,3 +102,18 @@ export const fetchDietarySuggestion = (key) => {
     });
   });
 };
+
+export const getUserData = (userId) => {
+  return new Promise((resolve, reject) => {
+    const userRef = ref(db, `users/${userId}`);
+    onValue(userRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        reject('User does not exist.');
+        return;
+      }
+      const data = snapshot.toJSON();
+      resolve({ ...data, id: userId });
+    });
+  });
+};
+

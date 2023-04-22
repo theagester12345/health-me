@@ -6,8 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { globalStyles } from '../styles/Styles';
 import { HeaderText } from '../components/HeaderText';
 import CardCategories from '../components/CardCategories';
-import { updateUserBMI } from '../DB/Firebase';
+import { updateUserBMI,getUserData, updateUserPassword } from '../DB/Firebase';
 import { calculateBmi, fetchBmiKey } from '../utils';
+import Toast from 'react-native-root-toast';
 
 // Exercise screen
 function ExerciseScreen({ navigation }) {
@@ -76,7 +77,9 @@ function BMIScreen({ navigation, route }) {
               text: 'No',
               onPress: () => {
                 setSaveBMI(false);
-                navigation.navigate('DietarySummary');
+                const bmi = calculateBmi(height, weight);
+                const bmiData = fetchBmiKey(bmi);
+                navigation.navigate('DietarySummary', { data: bmiData, bmi });
               },
               style: 'cancel',
             },
@@ -89,50 +92,84 @@ function BMIScreen({ navigation, route }) {
 }
 
 // Profile screen
-function ProfileScreen() {
-  // Dummy data for profile information
-  const profileData = {
-    username: 'JohnDoe',
-    email: 'johndoe@example.com',
-    password: '********',
-    dob: '01/01/1990',
-  };
-
+function ProfileScreen({ navigation, route }) {
+  const [user, setUser] = useState(null);
   const [resetPasswordDialogVisible, setResetPasswordDialogVisible] = useState(false);
   const [newPassword, setNewPassword] = useState('');
+
+  //Get user ID from async storage
+  useEffect(() => {
+    async function getUserIdFromStorage() {
+      const data = await AsyncStorage.getItem('LOGIN_DATA');
+      const userData = JSON.parse(data); 
+      if (userData !== null) {
+        getUserData(userData.id).then((data) => {
+          console.log('user data in use effect');
+          console.log(data);
+          setUser(data);
+        });
+      }
+    }
+    getUserIdFromStorage();
+  }, []);
 
   const handleResetPassword = () => {
     setResetPasswordDialogVisible(true);
   };
 
-  const handleSavePassword = () => {
+  const handleSavePassword = async () => {
     // Save new password logic here
     console.log('New password saved: ', newPassword);
+
+    const response = await updateUserPassword (user.id,newPassword);
+
+    if (response){
+      Toast.show('Password Change Succesful', {
+        duration: Toast.durations.SHORT,
+        shadow: true,
+        animation: true,
+        backgroundColor: 'green',
+      });
+    }else {
+      Toast.show(`${response}`, {
+        duration: Toast.durations.SHORT,
+        shadow: true,
+        animation: true,
+        backgroundColor: 'red',
+      });
+    }
     setResetPasswordDialogVisible(false);
   };
 
+  // return <View/>
+
   return (
     <View style={{ backgroundColor: '#000', flex: 1 }}>
-      <HeaderText title="Profile" />
+      <HeaderText title="User Profile" />
       <View style={{ padding: 20 }}>
         <View style={{ marginTop: 20 }}>
           <Text style={globalStyles.label}>Username:</Text>
-          <Text style={globalStyles.value}>{profileData.username}</Text>
+          <Text style={globalStyles.value}>{user.username}</Text>
         </View>
 
         <View style={{ marginTop: 20 }}>
           <Text style={globalStyles.label}>Email:</Text>
-          <Text style={globalStyles.value}>{profileData.email}</Text>
+          <Text style={globalStyles.value}>{user.email}</Text>
         </View>
 
         <View style={{ marginTop: 20 }}>
           <Text style={globalStyles.label}>Password:</Text>
-          <Text style={globalStyles.value}>{profileData.password}</Text>
+          <Text style={globalStyles.value}>**********</Text>
         </View>
 
         <View style={{ marginTop: 20 }}>
           <Text style={globalStyles.label}>Date of Birth:</Text>
-          <Text style={globalStyles.value}>{profileData.dob}</Text>
+          <Text style={globalStyles.value}>{user.dateOfBirth}</Text>
+        </View>
+
+        <View style={{ marginTop: 20 }}>
+          <Text style={globalStyles.label}>BMI:</Text>
+          <Text style={globalStyles.value}>{user.bmi}</Text>
         </View>
 
         <TouchableOpacity
@@ -218,7 +255,7 @@ function LogOutScreen({ navigation }) {
           onPress: () => console.log('Cancel pressed'),
           style: 'cancel',
         },
-        { text: 'Log Out', onPress: () => console.log('Log Out pressed') },
+        { text: 'Log Out', onPress: () => navigation.replace('Login') },
       ],
       { cancelable: false },
     );

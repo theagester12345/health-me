@@ -56,7 +56,7 @@ function SignUp({ navigation }) {
     // Before signinng up , check user existence
     const userExists = await checkUserExistence(email, username);
     if (userExists) {
-      Toast.show('Username or Email already exists', {
+      Toast.show('Email already exists', {
         duration: Toast.durations.SHORT,
         shadow: true,
         animation: true,
@@ -64,9 +64,8 @@ function SignUp({ navigation }) {
       });
 
       return;
-    }
-
-    // Sign Up the user
+    }else{
+      // Sign Up the user
     const response = await signUpUser(uniqueKey, userData, navigation);
     if (response === true) {
       Toast.show('User saved successfully', {
@@ -90,6 +89,10 @@ function SignUp({ navigation }) {
         backgroundColor: 'red',
       });
     }
+
+    }
+
+    
   };
 
   return (
