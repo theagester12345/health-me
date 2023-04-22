@@ -98,7 +98,6 @@ function ProfileScreen({ navigation, route }) {
   const [newPassword, setNewPassword] = useState('');
 
   //Get user ID from async storage
- 
   useEffect(() => {
     async function getUserIdFromStorage() {
       const data = await AsyncStorage.getItem('LOGIN_DATA');
@@ -106,8 +105,6 @@ function ProfileScreen({ navigation, route }) {
       if (userData !== null) {
         getUserData(userData.id)
           .then((data) => {
-            console.log('user data in use effect');
-            console.log(data);
             setUser(data);
           })
           .catch((error) => {
@@ -116,7 +113,7 @@ function ProfileScreen({ navigation, route }) {
       }
     }
     getUserIdFromStorage();
-  }, []);
+  }, [user]);
 
   if (!user) {
     return (

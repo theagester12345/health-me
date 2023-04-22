@@ -9,6 +9,7 @@ const DietarySummary = ({ route, navigation }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [programTitle, setProgramTitle] = useState('');
   const [program, setProgram] = useState('');
+  const [duration, setDuration] = useState('');
   const [exerciseRate, setExerciseRate] = useState('');
 
   useEffect(() => {
@@ -22,10 +23,11 @@ const DietarySummary = ({ route, navigation }) => {
           { label: item.nutrition_grp_4, value: item.nutrition_grp_4_example },
           { label: item.nutrition_grp_5, value: item.nutrition_grp_5_example },
         ]);
-
-        setProgramTitle(item['title ']);
+        console.log(item);
+        setProgramTitle(item.title);
         setProgram(item.program);
         setExerciseRate(item.exercise_rate);
+        setDuration(item.duration);
       })
       .catch((error) => console.error(error));
   }, []);
@@ -43,7 +45,7 @@ const DietarySummary = ({ route, navigation }) => {
         <Text style={[globalStyles.titleText, styles.bmiTitle]}>BMI Score:</Text>
         <Text style={[globalStyles.summaryLabel, { marginBottom: 32 }]}>
           {params.bmi}. You are currently{' '}
-          <Text style={{ color: params.data.color }}>{params.data.label.toLowerCase()}</Text>
+          <Text style={{ color: params.data.color}}>{params.data.label.toUpperCase()}</Text>
         </Text>
 
         <Text style={styles.workoutTitle}>Dietary Suggestions</Text>
@@ -57,7 +59,12 @@ const DietarySummary = ({ route, navigation }) => {
         </View>
 
         <Text style={styles.workoutTitle}>Program</Text>
-        <Text style={styles.workoutSubtitle}>{programTitle}</Text>
+        <View style={{flexDirection:'row'}}>
+        <Text style = {styles.workoutSubtitle}>Duration:</Text>
+        <Text style={styles.workoutText}>  {duration}</Text>
+        </View>
+        
+        <Text style={styles.workoutSubtitle}>{programTitle} </Text>
         <Text style={styles.workoutText}>{program}</Text>
 
         <Text style={styles.workoutSubtitle}>Exercise Rate:</Text>
@@ -86,7 +93,7 @@ const styles = StyleSheet.create({
   },
   workoutSubtitle: {
     fontSize: 16,
-    fontWeight: 'medium',
+    fontWeight: 'bold',
     color: '#fff',
     marginBottom: 8,
   },

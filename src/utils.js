@@ -18,10 +18,13 @@ const bmiIndices = [
 ];
 
 export function fetchBmiKey(bmi) {
-  return bmiIndices.find((bmiIndex) => {
-    return bmi >= bmiIndex.minValue && bmi <= bmiIndex.maxValue;
-  });
+  const obesityIndex = bmiIndices.find((bmiIndex) => bmiIndex.firebaseKey === 'obesity');
+  if (bmi > obesityIndex.maxValue) {
+    return obesityIndex;
+  }
+  return bmiIndices.find((bmiIndex) => bmi >= bmiIndex.minValue && bmi <= bmiIndex.maxValue);
 }
+
 
 export function calculateBmi(heightCm, weightKg) {
   const heightM = heightCm / 100;
